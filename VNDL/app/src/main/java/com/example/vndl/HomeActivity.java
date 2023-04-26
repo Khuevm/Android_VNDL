@@ -4,10 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vndl.database.DBHandler;
@@ -133,27 +137,46 @@ public class HomeActivity extends AppCompatActivity {
     private void loadExam(){
         List<Test> tests = db.getListTest();
         int totalScoreDone = 0;
-//        int totalScore = 25;
 
-        long doneTest = tests.stream().filter(new Predicate<Test>() {
-            @Override
-            public boolean test(Test test) {
-                return test.getTestResult() != null;
-            }
-        }).count();
+        int doneTest = 0;
 
         for (Test i : tests) {
             if (i.getTestResult() != null) {
+                doneTest++;
                 totalScoreDone += i.getTestResult().getNumberAnswerCorrect();
             }
         }
-        System.out.println(totalScoreDone);
-        System.out.println(testAllProgress.getWidth());
-        float averageScore = (float) totalScoreDone / (float) (doneTest);
+        float averageScore = 0;
+        if (doneTest != 0) {
+            averageScore = (float) totalScoreDone / (float) (doneTest);
+        }
+
+        float completePercent = (float) doneTest/(float) tests.size();
+
         txtCompleteTest.setText(doneTest+"/"+tests.size());
-        txtAverageTestText.setText(averageScore+"/25");
+        txtAverageTestText.setText(String.format("%.2f", averageScore)+"/25");
+
+        // Wait for the view to be laid out before getting its width
+        ViewTreeObserver vto = testAllProgress.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Remove the listener so it only gets called once
+                testAllProgress.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                // Get the width now that the layout is complete
+                int width = (int) (completePercent*(testAllProgress.getWidth()));
+                if (width > 0) {
+                    testProgress.setVisibility(View.VISIBLE);
+                    ViewGroup.LayoutParams params = testProgress.getLayoutParams();
+                    params.width = width;
+                    testProgress.setLayoutParams(params);
+                } else {
+                    testProgress.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
     }
-
 
 }
