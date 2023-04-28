@@ -21,9 +21,7 @@ public class QuestionHeaderItemAdapter extends RecyclerView.Adapter<QuestionHead
     Context context;
     List<Question> questions;
     int currentPosition = 0;
-//    boolean canShowResult = true;
     Screen screen = Screen.Practice;
-    int[] selectedAnswered;
     QuestionHeaderOnItemSelected questionHeaderListener;
 
     public QuestionHeaderItemAdapter(Context context, List<Question> questions, Screen screen) {
@@ -32,20 +30,8 @@ public class QuestionHeaderItemAdapter extends RecyclerView.Adapter<QuestionHead
         this.screen = screen;
     }
 
-    public QuestionHeaderItemAdapter(Context context, List<Question> questions, Screen screen, int[] selectedAnswered) {
-        this.context = context;
-        this.questions = questions;
-        this.selectedAnswered = selectedAnswered;
-        this.screen = screen;
-    }
-
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
-        notifyDataSetChanged();
-    }
-
-    public void setSelectedAnswered(int[] selectedAnswered) {
-        this.selectedAnswered = selectedAnswered;
         notifyDataSetChanged();
     }
 
@@ -84,7 +70,7 @@ public class QuestionHeaderItemAdapter extends RecyclerView.Adapter<QuestionHead
                 holder.questionNumberHeader.setTextColor(context.getResources().getColor(R.color.white));
             }
         } else if (screen == Screen.Test) {
-            if (selectedAnswered[position] == 0) {
+            if (question.getSelectedAnswer() == 0) {
                 holder.questionNumberHeaderView.setBackgroundColor(context.getResources().getColor(R.color.white));
                 holder.questionNumberHeader.setTextColor(context.getResources().getColor(R.color.black));
             } else {

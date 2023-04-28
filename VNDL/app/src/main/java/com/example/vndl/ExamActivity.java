@@ -104,7 +104,7 @@ public class ExamActivity extends AppCompatActivity implements QuestionHeaderOnI
         });
 
         //Question HeaderView
-        headerAdapter = new QuestionHeaderItemAdapter(this, questions, Screen.Test, selectedAnswer);
+        headerAdapter = new QuestionHeaderItemAdapter(this, questions, Screen.Test);
         LinearLayoutManager headerManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
 
         headerAdapter.setQuestionHeaderListener(this);
@@ -234,7 +234,8 @@ public class ExamActivity extends AppCompatActivity implements QuestionHeaderOnI
     public void questionOnItemClick(QuestionFragment v, int position) {
         selectedAnswer[currentPosition] = position;
 
-        headerAdapter.setSelectedAnswered(selectedAnswer);
+        questions.get(currentPosition).setSelectedAnswer(position);
+        headerAdapter.notifyDataSetChanged();
         v.setSelectedAnswered(position);
         v.showTestAnswered();
 
@@ -253,7 +254,7 @@ public class ExamActivity extends AppCompatActivity implements QuestionHeaderOnI
 
     private void startTimer(){
 
-        timer = new CountDownTimer(1*30*1000, 1000) {
+        timer = new CountDownTimer(20*60*1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
                 int seconds = (int) (millisUntilFinished / 1000) % 60;
