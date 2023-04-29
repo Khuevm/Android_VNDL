@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "782061541463",
+    "project_id": "vndl-1e583",
+    "storage_bucket": "vndl-1e583.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782061541463:android:8710ab2e39d83266caab12",
+        "android_client_info": {
+          "package_name": "com.example.vndl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782061541463-pju77e23ih50drb52k31t1e060a3ik64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWo5bJwecXwYsAQv_TizndQ_Mi8PXGxTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782061541463-pju77e23ih50drb52k31t1e060a3ik64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

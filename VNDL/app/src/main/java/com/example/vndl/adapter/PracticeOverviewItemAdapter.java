@@ -17,6 +17,7 @@ import com.example.vndl.R;
 import com.example.vndl.model.QuestionType;
 import com.example.vndl.support.OverviewOnItemSelected;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PracticeOverviewItemAdapter extends ArrayAdapter {

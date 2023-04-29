@@ -1,6 +1,8 @@
 package com.example.vndl;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,18 +22,22 @@ import com.example.vndl.database.DBHandler;
 import com.example.vndl.model.Question;
 import com.example.vndl.model.SignGroup;
 import com.example.vndl.model.Test;
+import com.example.vndl.notification.AlarmReceiver;
 import com.example.vndl.support.PieChart;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class HomeActivity extends AppCompatActivity {
     Button mucPhatButton, bienBaoButton;
+    ImageButton signOutButton;
     View practiceButton, testButton, testProgress, testAllProgress;
     PieChart pieChart;
-    TextView correctNumber, wrongNumber, remainNumber, totalNumber, txtCompleteTest, txtAverageTestText;
+    TextView txtHeader, correctNumber, wrongNumber, remainNumber, totalNumber, txtCompleteTest, txtAverageTestText;
     DBHandler db;
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +57,35 @@ public class HomeActivity extends AppCompatActivity {
         txtAverageTestText = findViewById(R.id.averageTestText);
         testProgress = findViewById(R.id.testProcess);
         testAllProgress = findViewById(R.id.testAllProcess);
+        signOutButton = findViewById(R.id.signOutButton);
+        txtHeader = findViewById(R.id.textView);
 
         //Database
         db = new DBHandler(this);
+
+        //Firebase
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            txtHeader.setText(""+user.getDisplayName());
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        //Notification
+        setNotification();
+
+        //SignOut Button
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         //Muc Phat
         mucPhatButton.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +106,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         //Practice
-//        loadPractice();
         practiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +115,6 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         //Exam
-//        loadExam();
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +123,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //DB
-        DBHandler database = new DBHandler(this);
     }
 
     @Override
@@ -177,6 +207,25 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setNotification(){
+        //Set notification 20:00 everyday
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 21);
+        calendar.set(Calendar.MINUTE, 11);
+        calendar.set(Calendar.SECOND, 00);
+        System.out.println(calendar.getTimeInMillis());
+        System.out.println(calendar.getTime());
+
+        alarmManager.cancel(pendingIntent);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 12*60*60*1000 , pendingIntent);  //set repeating every 24 hours
     }
 
 }
