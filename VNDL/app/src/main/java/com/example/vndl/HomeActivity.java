@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
     PieChart pieChart;
     TextView txtHeader, correctNumber, wrongNumber, remainNumber, totalNumber, txtCompleteTest, txtAverageTestText;
     DBHandler db;
+    AlarmManager alarmManager;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         //Notification
-        setNotification();
-
+        if (alarmManager == null) {
+            setNotification();
+        }
         //SignOut Button
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,20 +214,17 @@ public class HomeActivity extends AppCompatActivity {
     private void setNotification(){
         //Set notification 20:00 everyday
         Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 21);
-        calendar.set(Calendar.MINUTE, 11);
+        calendar.set(Calendar.HOUR_OF_DAY, 20);
+        calendar.set(Calendar.MINUTE, 00);
         calendar.set(Calendar.SECOND, 00);
         System.out.println(calendar.getTimeInMillis());
         System.out.println(calendar.getTime());
 
-        alarmManager.cancel(pendingIntent);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 12*60*60*1000 , pendingIntent);  //set repeating every 24 hours
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);  //set repeating every 24 hours
     }
 
 }

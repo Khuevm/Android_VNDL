@@ -61,13 +61,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         intentHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentHome, PendingIntent.FLAG_IMMUTABLE);
 
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANEL_ID)
                 .setContentTitle("Bạn vẫn còn " + remainQuestion + " câu hỏi chưa luyện tập.\n Hãy vào luyện tập")
                 .setSmallIcon(R.drawable.ic_notifications)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setSound(alarmSound)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
         notificationManager.notify(getNotificationid(), builder.build());
